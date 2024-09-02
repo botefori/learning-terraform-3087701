@@ -49,6 +49,7 @@ module "web_sg" {
 
   egress_rules       = ["all-all"]
   egress_cidr_blocks = ["0.0.0.0/0"]
+  
 }
 
 resource "aws_security_group_rule" "web_http_in" {
