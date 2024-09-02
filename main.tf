@@ -42,7 +42,7 @@ resource "aws_security_group_rule" "web_http_in" {
   protocol              = "tcp"
   cidr_blocks           = ["0.0.0.0/0"]
 
-  aws_security_group_id = aws_security_group.web.id
+  security_group_id = aws_security_group.web.id
 }
 
 resource "aws_security_group_rule" "web_https_in" {
@@ -52,7 +52,7 @@ resource "aws_security_group_rule" "web_https_in" {
   protocol              = "tcp"
   cidr_blocks           = ["0.0.0.0/0"]
 
-  aws_security_group_id = aws_security_group.web.id
+  security_group_id = aws_security_group.web.id
 }
 
 resource "aws_security_group_rule" "web_everything_out" {
@@ -62,5 +62,5 @@ resource "aws_security_group_rule" "web_everything_out" {
   protocol              = "-1"
   cidr_blocks           = ["0.0.0.0/0"]
 
-  aws_security_group_id = aws_security_group.web.id
+  security_group_id = aws_security_group.web.id
 }
