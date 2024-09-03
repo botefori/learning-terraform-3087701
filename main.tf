@@ -1,6 +1,4 @@
-
 data "aws_ami" "app_ami" {
-
   most_recent = true
 
   filter {
@@ -58,13 +56,13 @@ module "alb" {
   security_groups = [module.web_sg.security_group_id]
 
   listeners = {
-    http = {
-      port                    = 80
-      protocol                = "HTTP"
-      
-      default_action = {
-        type             = "forward"
-        target_group_arn = module.alb.target_group_arns[0]
+    ex-http-https-redirect = {
+      port     = 80
+      protocol = "HTTP"
+      redirect = {
+        port        = "443"
+        protocol    = "HTTPS"
+        status_code = "HTTP_301"
       }
     }
   }
