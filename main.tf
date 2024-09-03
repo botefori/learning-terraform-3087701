@@ -59,8 +59,8 @@ module "alb" {
 
   listeners = {
     http = {
-      port     = 80
-      protocol = "HTTP"
+      port                    = 80
+      protocol                = "HTTP"
       target_group_arn_suffix = "ex-instance"
     }
   }
