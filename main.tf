@@ -61,7 +61,11 @@ module "alb" {
     http = {
       port                    = 80
       protocol                = "HTTP"
-      target_group_arn_suffix = "ex-instance"
+      
+      default_action = {
+        type             = "forward"
+        target_group_arn = module.alb.target_group_arns[0]
+      }
     }
   }
 
