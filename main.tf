@@ -52,8 +52,7 @@ module "alb" {
   name    = "web-alb"
   vpc_id  = module.web_vpc.vpc_id
   subnets = module.web_vpc.public_subnets
-
-  # Security Group
+  
   security_groups = [module.web_sg.security_group_id]
 
   listeners = {
