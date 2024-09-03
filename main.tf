@@ -37,12 +37,49 @@ resource "aws_instance" "web" {
   ami           = data.aws_ami.app_ami.id
   instance_type = var.instance_type
 
+  subnet_id              = module.web_vpc.public_subnets[0]
   vpc_security_group_ids = [module.web_sg.security_group_id]
 
-  subnet_id = module.web_vpc.public_subnets[0]
 
   tags = {
     Name = "HelloWorld"
+  }
+}
+
+module "alb" {
+  source = "terraform-aws-modules/alb/aws"
+
+  name    = "web-alb"
+  vpc_id  = module.web_vpc.vpc_id
+  subnets = module.web_vpc.public_subnets
+
+  # Security Group
+  security_groups = module.web_sg.security_group_id
+
+  listeners = {
+    ex-http-https-redirect = {
+      port     = 80
+      protocol = "HTTP"
+      redirect = {
+        port        = "443"
+        protocol    = "HTTPS"
+        status_code = "HTTP_301"
+      }
+    }
+  }
+
+  target_groups = {
+    ex-instance = {
+      name_prefix      = "web-"
+      protocol         = "HTTP"
+      port             = 80
+      target_type      = "instance"
+      target_id        = aws_instance.web.id
+    }
+  }
+
+  tags = {
+    Environment = "Dev"
   }
 }
 
