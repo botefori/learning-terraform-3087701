@@ -53,7 +53,7 @@ resource "aws_subnet" "web_vpc_public_subnet_1_c" {
 
 resource "aws_security_group" "web_vpc_sg" {
   name        = "web-vpc-sg"
-  vpc_id      = module.aws_vpc.web_vpc.id
+  vpc_id      = module.web_vpc.vpc_id
 
   tags = {
     Name = "web-vpc-sg"
