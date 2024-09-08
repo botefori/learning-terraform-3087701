@@ -51,9 +51,8 @@ resource "aws_subnet" "web_vpc_public_subnet_1_c" {
   }
 }
 
-resource "aws_security_group" ""web_vpc_sg" {
-  name        = "allow_tls"
-  description = "Allow TLS inbound traffic and all outbound traffic"
+resource "aws_security_group" "web_vpc_sg" {
+  name        = "web-vpc-sg"
   vpc_id      = aws_vpc.web_vpc.id
 
   tags = {
