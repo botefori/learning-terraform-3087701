@@ -50,3 +50,27 @@ resource "aws_subnet" "web_vpc_public_subnet_1_c" {
     Environment = "dev"
   }
 }
+
+resource "aws_security_group" ""web_vpc_sg" {
+  name        = "allow_tls"
+  description = "Allow TLS inbound traffic and all outbound traffic"
+  vpc_id      = aws_vpc.web_vpc.id
+
+  tags = {
+    Name = ""web-vpc-sg"
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "web_vpc_ipv4" {
+  security_group_id = aws_security_group.web_vpc_sg.id
+  cidr_ipv4         = aws_vpc.web_vpc.cidr_block
+  from_port         = 80
+  ip_protocol       = "tcp"
+  to_port           = 443
+}
+
+resource "aws_vpc_security_group_egress_rule" "web_vpc_allow_all_traffic_ipv4" {
+  security_group_id = aws_security_group.web_vpc_sg.id
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "-1"
+}
