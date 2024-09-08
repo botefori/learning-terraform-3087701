@@ -15,6 +15,18 @@ module "web_vpc" {
   }
 }
 
+resource "aws_internet_gateway" "web_vpc_igw" {
+  vpc_id = module.web_vpc.vpc_id
+
+  tags = {
+    Name = "web-vpc-igw"
+  }
+}
+
+resource "aws_egress_only_internet_gateway" "web_vpc_egw" {
+  vpc_id = module.web_vpc.vpc_id
+}
+
 resource "aws_subnet" "web_vpc_public_subnet_1_a" {
   vpc_id     = module.web_vpc.vpc_id
   cidr_block = "10.0.101.0/24"
@@ -48,6 +60,25 @@ resource "aws_subnet" "web_vpc_public_subnet_1_c" {
   tags = {
     Name = "sn-web-1-c"
     Environment = "dev"
+  }
+}
+
+
+resource "aws_route_table" "web_vpc" {
+  vpc_id = module.web_vpc.vpc_id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.web_vpc_igw.id
+  }
+
+  route {
+    ipv6_cidr_block = "::/0"
+    gateway_id = aws_egress_only_internet_gateway.web_vpc_egw.id
+  }
+
+  tags = {
+    Name = "web-vpc-rt"
   }
 }
 
