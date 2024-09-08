@@ -87,3 +87,12 @@ resource "aws_lb" "web_vpc_alb" {
     Environment = "Dev"
   }
 }
+
+resource "aws_lb_target_group" "web_vpc_alb_target_group" {
+  name_prefix   = "web-"
+  port          = 80
+  protocol      = "HTTP"
+  vpc_id        = module.web_vpc.vpc_id
+  target_type   = "instance"
+  deregistration_delay = 300
+}
