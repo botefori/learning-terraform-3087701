@@ -164,7 +164,7 @@ resource "aws_instance" "web" {
   ami           = data.aws_ami.app_ami.id
   instance_type = var.instance_type
 
-  subnet_id              = module.web_vpc.public_subnets[0]
+  subnet_id              = aws_subnet.web_vpc_public_subnet_1_c.id
   vpc_security_group_ids = [aws_security_group.web_vpc_sg.id]
 
 
