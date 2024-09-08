@@ -64,7 +64,7 @@ resource "aws_subnet" "web_vpc_public_subnet_1_c" {
 }
 
 
-resource "aws_route_table" "web_vpc" {
+resource "aws_route_table" "web_vpc_rt" {
   vpc_id = module.web_vpc.vpc_id
 
   route {
@@ -80,6 +80,21 @@ resource "aws_route_table" "web_vpc" {
   tags = {
     Name = "web-vpc-rt"
   }
+}
+
+resource "aws_route_table_association" "web_vpc_rt_web_A__association" {
+  subnet_id      = aws_subnet.web_vpc_public_subnet_1_a.id
+  route_table_id = aws_route_table.web_vpc_rt.id
+}
+
+resource "aws_route_table_association" "web_vpc_rt_web_B__association" {
+  subnet_id      = aws_subnet.web_vpc_public_subnet_1_b.id
+  route_table_id = aws_route_table.web_vpc_rt.id
+}
+
+resource "aws_route_table_association" "web_vpc_rt_web_C__association" {
+  subnet_id      = aws_subnet.web_vpc_public_subnet_1_c.id
+  route_table_id = aws_route_table.web_vpc_rt.id
 }
 
 resource "aws_security_group" "web_vpc_sg" {
