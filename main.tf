@@ -1,4 +1,21 @@
 
+data "aws_ami" "app_ami" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["bitnami-tomcat-*-x86_64-hvm-ebs-nami"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["979382823631"] # Bitnami
+}
+
+
 data "aws_vpc" "default" {
   default = true
 }
@@ -141,4 +158,17 @@ resource "aws_lb_target_group" "web_vpc_alb_target_group" {
   vpc_id        = module.web_vpc.vpc_id
   target_type   = "instance"
   deregistration_delay = 300
+}
+
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.app_ami.id
+  instance_type = var.instance_type
+
+  subnet_id              = module.web_vpc.public_subnets[0]
+  vpc_security_group_ids = [aws_security_group.web_vpc_sg.id]
+
+
+  tags = {
+    Name = "HelloWorld"
+  }
 }
