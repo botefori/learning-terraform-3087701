@@ -73,3 +73,17 @@ resource "aws_vpc_security_group_egress_rule" "web_vpc_allow_all_traffic_ipv4" {
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1"
 }
+
+resource "aws_lb" "web_vpc_alb" {
+  name               = "web-vpc-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.web_vpc_sg.id]
+  subnets            = [aws_subnet.web_vpc_public_subnet_1_a.id, aws_subnet.web_vpc_public_subnet_1_b.id, aws_subnet.web_vpc_public_subnet_1_c.id]
+
+  enable_deletion_protection = true
+
+  tags = {
+    Environment = "Dev"
+  }
+}
