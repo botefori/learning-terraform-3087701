@@ -173,6 +173,12 @@ resource "aws_instance" "web" {
   }
 }
 
+resource "aws_lb_target_group_attachment" "aws_lb_target_group_attachment_web" {
+  target_group_arn = aws_lb_target_group.web_vpc_alb_target_group.arn
+  target_id        = aws_instance.web.id
+  port             = 80
+}
+
 resource "aws_lb_listener" "web_vpc_alb_listner" {
   load_balancer_arn = aws_lb.web_vpc_alb.arn
   port              = "80"
@@ -182,10 +188,4 @@ resource "aws_lb_listener" "web_vpc_alb_listner" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.web_vpc_alb_target_group.arn
   }
-}
-
-resource "aws_lb_target_group_attachment" "aws_lb_target_group_attachment_web" {
-  target_group_arn = aws_lb_target_group.web_vpc_alb_target_group.arn
-  target_id        = aws_instance.web.id
-  port             = 80
 }
