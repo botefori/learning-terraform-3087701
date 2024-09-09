@@ -151,8 +151,6 @@ resource "aws_lb" "web_vpc_alb" {
   }
 }
 
-
-
 resource "aws_lb_target_group" "web_vpc_alb_target_group" {
   name_prefix          = "web-"
   ip_address_type      = "ipv4"
@@ -167,6 +165,7 @@ resource "aws_lb_target_group" "web_vpc_alb_target_group" {
 resource "aws_instance" "web" {
   ami           = data.aws_ami.app_ami.id
   instance_type = var.instance_type
+  subnet_id       = aws_subnet.web_vpc_public_subnet_1_a.id
 
   tags = {
     Name = "HelloWorld"
