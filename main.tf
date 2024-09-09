@@ -144,7 +144,7 @@ resource "aws_lb" "web_vpc_alb" {
   security_groups    = [aws_security_group.web_vpc_sg.id]
   subnets            = [aws_subnet.web_vpc_public_subnet_1_a.id, aws_subnet.web_vpc_public_subnet_1_b.id, aws_subnet.web_vpc_public_subnet_1_c.id]
 
-  enable_deletion_protection = true
+  enable_deletion_protection = false
 
   tags = {
     Environment = "Dev"
@@ -160,6 +160,23 @@ resource "aws_lb_target_group" "web_vpc_alb_target_group" {
   vpc_id               = module.web_vpc.vpc_id
   target_type          = "instance"
   deregistration_delay = 300
+   health_check {
+    enabled             = true
+    healthy_threshold   = 5
+    interval            = 30
+    matcher             = "200"
+    path                = "/"
+    port                = "traffic-port"
+    protocol            = "HTTP"
+    timeout             = 5
+    unhealthy_threshold = 2
+  }
+  stickiness {
+    cookie_duration = 86400
+    enabled         = false
+    type            = "lb_cookie"
+  }
+
 }
 
 resource "aws_instance" "web" {
