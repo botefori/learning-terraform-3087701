@@ -163,11 +163,13 @@ resource "aws_lb_listener" "web_vpc_alb_listner" {
 }
 
 resource "aws_lb_target_group" "web_vpc_alb_target_group" {
-  name_prefix   = "web-"
-  port          = 80
-  protocol      = "HTTP"
-  vpc_id        = module.web_vpc.vpc_id
-  target_type   = "instance"
+  name_prefix          = "web-"
+  ip_address_type      = "ipv4"
+  port                 = 80
+  protocol             = "HTTP"
+  protocol_version     = "HTTP1"
+  vpc_id               = module.web_vpc.vpc_id
+  target_type          = "instance"
   deregistration_delay = 300
 }
 
@@ -175,11 +177,13 @@ resource "aws_instance" "web" {
   ami           = data.aws_ami.app_ami.id
   instance_type = var.instance_type
 
-  subnet_id              = aws_subnet.web_vpc_public_subnet_1_c.id
-  vpc_security_group_ids = [aws_security_group.web_vpc_sg.id]
-
-
   tags = {
     Name = "HelloWorld"
   }
+}
+
+resource "aws_lb_target_group_attachment" "aws_lb_target_group_attachment_web" {
+  target_group_arn = aws_lb_target_group.web_vpc_alb_target_group.arn
+  target_id        = aws_instance.web.id
+  port             = 80
 }
