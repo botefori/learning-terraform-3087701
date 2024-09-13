@@ -128,7 +128,7 @@ resource "aws_vpc_security_group_ingress_rule" "web_vpc_ipv4" {
   cidr_ipv4         = module.web_vpc.vpc_cidr_block
   from_port         = 80
   ip_protocol       = "tcp"
-  to_port           = 443
+  to_port           = 80
 }
 
 resource "aws_vpc_security_group_egress_rule" "web_vpc_allow_all_traffic_ipv4" {
@@ -183,6 +183,7 @@ resource "aws_instance" "web" {
   ami           = data.aws_ami.app_ami.id
   instance_type = var.instance_type
   subnet_id       = aws_subnet.web_vpc_public_subnet_1_a.id
+  vpc_security_group_ids = [aws_security_group.web_vpc_sg.id]
 
   tags = {
     Name = "HelloWorld"
