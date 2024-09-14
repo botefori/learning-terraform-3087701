@@ -202,7 +202,7 @@ resource "aws_autoscaling_group" "web" {
 
 resource "aws_autoscaling_attachment" "web_auto_scaling_attachment" {
   autoscaling_group_name = aws_autoscaling_group.web.id
-  alb_target_group_arn   = aws_lb_target_group.web_vpc_alb_target_group.arn
+  lb_target_group_arn   = aws_lb_target_group.web_vpc_alb_target_group.arn
 }
 
 #resource "aws_lb_target_group_attachment" "aws_lb_target_group_attachment_web" {
