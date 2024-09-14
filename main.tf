@@ -131,7 +131,7 @@ resource "aws_vpc_security_group_ingress_rule" "web_vpc_ipv4" {
   to_port           = 80
 }
 
-resource "aws_vpc_security_group_egress_rule" "web_vpc_allow_all_traffic_ipv4" {
+resource "aws_vpc_security_group_egress_rule" "web_vpc_allow_all_coming_in_traffics_ipv4" {
   security_group_id = aws_security_group.web_vpc_sg.id
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1"
@@ -160,7 +160,7 @@ resource "aws_lb_target_group" "web_vpc_alb_target_group" {
   vpc_id               = module.web_vpc.vpc_id
   target_type          = "instance"
   deregistration_delay = 300
-   health_check {
+  health_check {
     enabled             = true
     healthy_threshold   = 5
     interval            = 30
@@ -179,15 +179,32 @@ resource "aws_lb_target_group" "web_vpc_alb_target_group" {
 
 }
 
-resource "aws_instance" "web" {
-  ami           = data.aws_ami.app_ami.id
-  instance_type = var.instance_type
-  subnet_id       = aws_subnet.web_vpc_public_subnet_1_a.id
-  vpc_security_group_ids = [aws_security_group.web_vpc_sg.id]
+resource "aws_launch_configuration" "web_launch_config" {
+  name_prefix     = "learn-terraform-aws-asg-"
+  image_id        = data.aws_ami.app_ami.id
+  instance_type   = data.aws_ami.app_ami.id
+  security_groups = [aws_security_group.web_vpc_sg.id]
+
+  lifecycle {
+    create_before_destroy = true
+  }
 
   tags = {
     Name = "HelloWorld"
   }
+}
+
+resource "aws_autoscaling_group" "web" {
+  name                 = "web" 
+  min_size             = 1
+  max_size             = 2
+  desired_capacity     = 1
+  vpc_zone_identifier       = [aws_subnet.web_vpc_public_subnet_1_a.id, aws_subnet.web_vpc_public_subnet_1_b.id, aws_subnet.web_vpc_public_subnet_1_c.id]
+}
+
+resource "aws_autoscaling_attachment" "web_auto_scaling_attachment" {
+  autoscaling_group_name = aws_autoscaling_group.web.id
+  alb_target_group_arn   = aws_lb_target_group.web_vpc_alb_target_group.arn
 }
 
 resource "aws_lb_target_group_attachment" "aws_lb_target_group_attachment_web" {
