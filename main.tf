@@ -180,7 +180,7 @@ resource "aws_lb_target_group" "web_vpc_alb_target_group" {
 }
 
 resource "aws_launch_configuration" "web_launch_config" {
-  name_prefix     = "learn-terraform-aws-asg-"
+  name_prefix     = "learn-terraform-aws-asg-hello-horld-"
   image_id        = data.aws_ami.app_ami.id
   instance_type   = data.aws_ami.app_ami.id
   security_groups = [aws_security_group.web_vpc_sg.id]
@@ -189,9 +189,6 @@ resource "aws_launch_configuration" "web_launch_config" {
     create_before_destroy = true
   }
 
-  tags = {
-    Name = "HelloWorld"
-  }
 }
 
 resource "aws_autoscaling_group" "web" {
