@@ -193,9 +193,9 @@ resource "aws_launch_configuration" "web_launch_config" {
 
 resource "aws_autoscaling_group" "web" {
   name                 = "web" 
-  min_size             = 1
-  max_size             = 2
-  desired_capacity     = 1
+  min_size             = 2
+  max_size             = 3
+  desired_capacity     = 2
   launch_configuration = aws_launch_configuration.web_launch_config.name
   vpc_zone_identifier  = [aws_subnet.web_vpc_public_subnet_1_a.id, aws_subnet.web_vpc_public_subnet_1_b.id, aws_subnet.web_vpc_public_subnet_1_c.id]
 }
