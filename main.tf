@@ -4,7 +4,7 @@ data "aws_ami" "app_ami" {
 
   filter {
     name   = "name"
-    values = ["bitnami-tomcat-*-x86_64-hvm-ebs-nami"]
+    values = [var.ami_filter.name]
   }
 
   filter {
@@ -12,7 +12,7 @@ data "aws_ami" "app_ami" {
     values = ["hvm"]
   }
 
-  owners = ["979382823631"] # Bitnami
+  owners = [var.ami_filter.owner] # Bitnami
 }
 
 
@@ -23,12 +23,12 @@ data "aws_vpc" "default" {
 module "web_vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name = "web-vpc"
-  cidr = "10.0.0.0/16"
+  name = "web_vpc"
+  cidr = "${var.environment.network_prefix}.0.0/16"
 
   tags = {
     Terraform = "true"
-    Environment = "dev"
+    Environment = var.environment.name
   }
 }
 
@@ -37,6 +37,7 @@ resource "aws_internet_gateway" "web_vpc_igw" {
 
   tags = {
     Name = "web-vpc-igw"
+    Environment = var.environment.name
   }
 }
 
@@ -46,37 +47,37 @@ resource "aws_egress_only_internet_gateway" "web_vpc_egw" {
 
 resource "aws_subnet" "web_vpc_public_subnet_1_a" {
   vpc_id     = module.web_vpc.vpc_id
-  cidr_block = "10.0.101.0/24"
+  cidr_block = "${var.environment.network_prefix}.101.0/24"
   map_public_ip_on_launch = true
   availability_zone = "us-east-1a"
 
   tags = {
     Name = "sn-web-1-a"
-    Environment = "dev"
+    Environment = var.environment.name
   }
 }
 
 resource "aws_subnet" "web_vpc_public_subnet_1_b" {
   vpc_id     = module.web_vpc.vpc_id
-  cidr_block = "10.0.102.0/24"
+  cidr_block = "${var.environment.network_prefix}.102.0/24"
   map_public_ip_on_launch = true
   availability_zone = "us-east-1b"
 
   tags = {
     Name = "sn-web-1-b"
-    Environment = "dev"
+    Environment = var.environment.name
   }
 }
 
 resource "aws_subnet" "web_vpc_public_subnet_1_c" {
   vpc_id     = module.web_vpc.vpc_id
-  cidr_block = "10.0.103.0/24"
+  cidr_block = "${var.environment.network_prefix}.103.0/24"
   map_public_ip_on_launch = true
   availability_zone = "us-east-1c"
 
   tags = {
     Name = "sn-web-1-c"
-    Environment = "dev"
+    Environment = var.environment.name
   }
 }
 
@@ -96,6 +97,7 @@ resource "aws_route_table" "web_vpc_rt" {
 
   tags = {
     Name = "web-vpc-rt"
+    Environment = var.environment.name
   }
 }
 
@@ -120,6 +122,7 @@ resource "aws_security_group" "web_vpc_sg" {
 
   tags = {
     Name = "web-vpc-sg"
+    Environment = var.environment.name
   }
 }
 
@@ -147,7 +150,7 @@ resource "aws_lb" "web_vpc_alb" {
   enable_deletion_protection = false
 
   tags = {
-    Environment = "Dev"
+    Environment = var.environment.name
   }
 }
 
